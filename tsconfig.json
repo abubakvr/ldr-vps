@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES6",                // Specify the target ECMAScript version
+    "module": "ES6",                // Use ES Modules
+    "moduleResolution": "node",     // Resolve imports using Node.js-style resolution
+    "outDir": "./dist",             // Output directory for compiled files
+    "esModuleInterop": true,        // Ensures compatibility with CommonJS/ESModule imports
+    "resolveJsonModule": true,      // Enable importing JSON files
+    "allowSyntheticDefaultImports": true
+  },
+  "tsc-alias": {
+    "verbose": false,
+    "resolveFullPaths": true,
+    "fileExtensions": {
+      "inputGlob": "{js,jsx,mjs}",
+      "outputCheck": ["js", "json", "jsx", "mjs"]
+    }
+  },
+  "include": ["src"],              
+  "exclude": ["node_modules"]
+}
