@@ -1,4 +1,4 @@
-# Leaderboard Dapp
+# Chedda Finance Leaderboard
 
 This project is a decentralized application (dApp) that tracks user activity on a lending protocol and rewards users with points based on their borrowing and supplying activity. The dApp uses a MongoDB database to store user data and utilizes the `chedda-sdk` for interacting with the lending protocol.
 
@@ -58,14 +58,14 @@ This project is a decentralized application (dApp) that tracks user activity on 
 ### Development
 
 ```bash
-    npm run dev
+npm run dev
 ```
 
 ### Production
 
 ```bash
-    npm run build
-    npm start
+npm run build
+npm start
 ```
 
 ## Technologies Used
@@ -76,7 +76,3 @@ This project is a decentralized application (dApp) that tracks user activity on 
 - Mongoose
 - ethers.js
 - chedda-sdk
-
-```
-
-```
