@@ -1,12 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ES6",                // Specify the target ECMAScript version
-    "module": "ES6",                // Use ES Modules
-    "moduleResolution": "node",     // Resolve imports using Node.js-style resolution
-    "outDir": "./dist",             // Output directory for compiled files
-    "esModuleInterop": true,        // Ensures compatibility with CommonJS/ESModule imports
-    "resolveJsonModule": true,      // Enable importing JSON files
-    "allowSyntheticDefaultImports": true
+    "target": "ES6",                
+    "module": "ESNext",               
+    "moduleResolution": "node",    
+    "outDir": "./dist",            
+    "esModuleInterop": true,       
+    "resolveJsonModule": true,     
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*", "src/*"]
+    }
   },
   "tsc-alias": {
     "verbose": false,
