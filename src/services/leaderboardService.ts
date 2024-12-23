@@ -54,9 +54,6 @@ export class LeaderboardService {
         account.total = (account.total || 0) + supplyPoints + borrowPoints;
         await account.save();
       }
-
-      // Sort accounts by total points in descending order
-      await Leaderboard.find({}).sort({ total: -1 }).exec();
     } catch (error) {
       console.error("Error calculating points:", error);
       throw error;
