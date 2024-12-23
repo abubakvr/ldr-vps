@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import rateLimit from "express-rate-limit";
+import cors from "cors";
 import leaderboardRoute from "./routes/leaderboard";
 import { initLeaderboardServices } from "./services";
 import { connectDB } from "./config/db";
@@ -20,7 +21,7 @@ const limiter = rateLimit({
 
 // Apply rate limiting to all routes
 app.use(limiter);
-
+app.use(cors());
 app.use(express.json());
 
 // Add this middleware before your routes

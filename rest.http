@@ -1,4 +1,4 @@
-GET http://localhost:5001/api/leaderboard?limit=2&offset=0
+GET http://localhost:5001/api/leaderboard?limit=3&offset=0
 
 
 ###
