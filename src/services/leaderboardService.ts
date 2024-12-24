@@ -11,7 +11,7 @@ export class LeaderboardService {
     let referralCode: string;
 
     while (!isUnique) {
-      referralCode = Math.floor(10000000 + Math.random() * 900000).toString();
+      referralCode = Math.floor(10000000 + Math.random() * 90000000).toString();
       const existing = await Leaderboard.findOne({ referralCode });
       if (!existing) isUnique = true;
     }
