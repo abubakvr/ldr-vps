@@ -60,6 +60,18 @@ export class LeaderboardService {
     }
   }
 
+  //   {
+  //     positions: [
+  //         {
+  //           "asset": "0x0",
+  //           "supplied": "141",
+  //           "borrowed": "41510"
+  //          }
+  //      ],
+  //      supplyPoints: 42422,
+  //      borrowPoints: 249204
+  //  }
+
   private async createNewEntry(
     address: string,
     amount: number,

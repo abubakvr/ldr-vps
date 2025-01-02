@@ -1,38 +1,56 @@
-import { Chedda } from "chedda-sdk";
 import { ethers } from "ethers";
 import { LeaderboardService } from "./leaderboardService";
 import { PriceService } from "./priceService";
-import { lendingPoolLens } from "../utils/constants";
+import { lendingPoolLens, webSocketUrl } from "../utils/constants";
 import { tokens } from "../utils/tokens";
+import { LendingPool } from "./poolContract";
+import { PoolLens } from "./lensContract";
 
 export class PoolEventService {
+  provider: ethers.WebSocketProvider;
   constructor(
-    private chedda: Chedda,
-    private signer: ethers.JsonRpcSigner,
     private leaderboardService: LeaderboardService,
     private priceService: PriceService
-  ) {}
+  ) {
+    this.provider = new ethers.WebSocketProvider(webSocketUrl);
+  }
 
   async listenToPoolEvents(): Promise<void> {
     const pools = await this.getPools();
     pools.forEach(async (address: string) => {
-      const lendingPool = this.chedda.lendingPool(address, this.signer);
+      const lendingPool = new LendingPool(this.provider, address);
       const config = await this.getPoolConfig(lendingPool);
       this.setupEventListeners(lendingPool.contract, config);
     });
   }
 
   private async getPools(): Promise<string[]> {
-    const lens = this.chedda.poolLens(lendingPoolLens, this.signer);
+    const lens = new PoolLens(this.provider, lendingPoolLens);
     return await lens.activePools();
   }
 
-  private async getPoolConfig(lendingPool: any) {
-    return {
-      priceFeed: await lendingPool.priceFeed(),
-      decimals: await lendingPool.decimals(),
-      asset: await lendingPool.asset(),
-    };
+  private async getPoolConfig(lendingPool: LendingPool) {
+    try {
+      const [priceFeed, decimals, asset] = await Promise.all([
+        lendingPool.priceFeed(),
+        lendingPool.decimals(),
+        lendingPool.asset(),
+      ]);
+
+      // Validate price feed address
+      if (!ethers.isAddress(priceFeed)) {
+        throw new Error(`Invalid price feed address: ${priceFeed}`);
+      }
+
+      return {
+        priceFeed,
+        decimals,
+        asset,
+      };
+    } catch (error) {
+      console.error(`Error getting pool config for pool:`, error);
+      throw error;
+    }
   }
 
   private setupEventListeners(contract: any, config: any): void {
