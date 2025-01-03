@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
 import { LeaderboardService } from "./leaderboardService";
-import { PriceService } from "./priceService";
 import { lendingPoolLens, webSocketUrl } from "../utils/constants";
 import { tokens } from "../utils/tokens";
 import { LendingPool } from "./poolContract";
@@ -8,10 +7,7 @@ import { PoolLens } from "./lensContract";
 
 export class PoolEventService {
   provider: ethers.WebSocketProvider;
-  constructor(
-    private leaderboardService: LeaderboardService,
-    private priceService: PriceService
-  ) {
+  constructor(private leaderboardService: LeaderboardService) {
     this.provider = new ethers.WebSocketProvider(webSocketUrl);
   }
 
@@ -62,25 +58,19 @@ export class PoolEventService {
   private setupBorrowListener(contract: any, config: any): void {
     contract.on("AssetBorrowed", async (account: string, amount: any) => {
       try {
-        const assetPrice = await this.priceService.getTokenPrice(
-          config.asset,
-          config.priceFeed
-        );
-        if (!assetPrice) throw new Error("Failed to get asset price");
-
         const formattedAmount = ethers.formatUnits(amount, config.decimals);
-        const dollarAmount = Number(formattedAmount) * Number(assetPrice);
-
         await this.leaderboardService.updateLeaderboard(
           account,
-          dollarAmount,
-          "borrowAsset"
+          parseFloat(formattedAmount),
+          "borrowAsset",
+          config.asset,
+          config.priceFeed
         );
 
         console.log({
           event: "AssetBorrowed",
           account,
-          dollarAmount,
+          formattedAmount,
         });
       } catch (error) {
         console.error("Error processing AssetBorrowed event:", error);
@@ -98,26 +88,20 @@ export class PoolEventService {
         debtBurned: any
       ) => {
         try {
-          const assetPrice = await this.priceService.getTokenPrice(
-            config.asset,
-            config.priceFeed
-          );
-          if (!assetPrice) throw new Error("Failed to get asset price");
-
           const formattedAmount = ethers.formatUnits(amount, config.decimals);
-          const dollarAmount = Number(formattedAmount) * Number(assetPrice);
-
           await this.leaderboardService.updateLeaderboard(
             account,
-            dollarAmount,
-            "repayAsset"
+            parseFloat(formattedAmount),
+            "repayAsset",
+            config.asset,
+            config.priceFeed
           );
 
           console.log({
             event: "AssetRepaid",
             account,
             repaidBy,
-            dollarAmount,
+            formattedAmount,
             debtBurned: ethers.formatUnits(debtBurned, config.decimals),
           });
         } catch (error) {
@@ -134,26 +118,21 @@ export class PoolEventService {
       async (token: string, account: string, _: any, amount: any) => {
         try {
           const tokenDecimals = tokens[token].decimals;
-          const tokenPrice = await this.priceService.getTokenPrice(
-            token,
-            config.priceFeed
-          );
-          if (!tokenPrice) throw new Error("Failed to get token price");
-
           const formattedAmount = ethers.formatUnits(amount, tokenDecimals);
-          const dollarAmount = Number(formattedAmount) * Number(tokenPrice);
 
           await this.leaderboardService.updateLeaderboard(
             account,
-            dollarAmount,
-            "CollateralAdded"
+            parseFloat(formattedAmount),
+            "CollateralAdded",
+            token,
+            config.priceFeed
           );
 
           console.log({
             event: "CollateralAdded",
             account,
             token,
-            dollarAmount,
+            formattedAmount,
           });
         } catch (error) {
           console.error("Error processing CollateralAdded event:", error);
@@ -167,26 +146,21 @@ export class PoolEventService {
       async (token: string, account: string, _: any, amount: any) => {
         try {
           const tokenDecimals = tokens[token].decimals;
-          const tokenPrice = await this.priceService.getTokenPrice(
-            token,
-            config.priceFeed
-          );
-          if (!tokenPrice) throw new Error("Failed to get token price");
-
           const formattedAmount = ethers.formatUnits(amount, tokenDecimals);
-          const dollarAmount = Number(formattedAmount) * Number(tokenPrice);
 
           await this.leaderboardService.updateLeaderboard(
             account,
-            dollarAmount,
-            "CollateralRemoved"
+            parseFloat(formattedAmount),
+            "CollateralRemoved",
+            token,
+            config.priceFeed
           );
 
           console.log({
             event: "CollateralRemoved",
             account,
             token,
-            dollarAmount,
+            formattedAmount,
           });
         } catch (error) {
           console.error("Error processing CollateralRemoved event:", error);

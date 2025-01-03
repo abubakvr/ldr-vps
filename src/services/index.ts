@@ -7,9 +7,9 @@ import { jsonRpcUrl } from "../utils/constants";
 
 const chedda = new Chedda(jsonRpcUrl);
 
-const leaderboardService = new LeaderboardService();
 const priceService = new PriceService(chedda);
-const poolEventService = new PoolEventService(leaderboardService, priceService);
+const leaderboardService = new LeaderboardService(priceService);
+const poolEventService = new PoolEventService(leaderboardService);
 
 export const initLeaderboardServices = () => {
   // Start pool event listeners
